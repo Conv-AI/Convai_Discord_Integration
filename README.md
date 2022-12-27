@@ -23,3 +23,11 @@ Improvements:
 - All conversation context maintenance is being done with channel-id of the messages being received
 - Removed default-character from env variables. Please start with a new one.
 Note: DM Channel / Private Messages to the bot is in beta mode.
+
+V0.1.2
+
+Improvements:
+- Major code refactoring to include upcoming features.
+- Added simple unit-testing code for python bot. 
+
+Note: Run `python -m pytest test` inside the `python` folder.

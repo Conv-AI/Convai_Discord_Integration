@@ -4,11 +4,36 @@ import json
 import os
 import base64
 from dotenv import load_dotenv
+import re
 
+# Local imports
+from messageTypes import MessageTypes
+
+# Third-party imports
+import discord
 
 load_dotenv()
 
-def getResponse(userQuery: str, characterID: str, sessionID: str, voiceResponse: str):
+
+def parse_message(message, client_id):
+    # if message.startswith('<@{}>'.format(client.user.id)):
+    #     return message.split('<@{}>'.format(client.user.id))[1].strip(), MessageTypes.CHANNEL_MENTION
+
+    if message.startswith('/reset <@{}>'.format(client_id)):
+        return message.split('/reset <@{}>'.format(client_id))[1].strip(), MessageTypes.CHAT_RESET
+
+    elif message.startswith('/private <@{}>'.format(client_id)):
+        return message.split('/private <@{}>'.format(client_id))[1].strip(), MessageTypes.GO_PRIVATE
+
+    # Ignore responding to any other commands with '/' or '!' prefix. These are the most common prefixes.
+    elif re.search("^[/!][a-zA-Z]*", message):
+        return message, MessageTypes.NO_RESPONSE
+
+    else:
+        return message.strip(), MessageTypes.RESPOND
+    
+
+def getResponse(userQuery: str, characterID: str, sessionID: str, voiceResponse: str) -> dict:
     '''
     This function makes an API call to the convai servers to get back
     a response from the bot to the given user query.

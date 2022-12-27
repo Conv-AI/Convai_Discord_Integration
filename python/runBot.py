@@ -5,6 +5,7 @@ from dotenv import load_dotenv
 
 # Local imports
 import utils
+from messageTypes import MessageTypes
 
 # Third-party imports
 import discord
@@ -81,33 +82,40 @@ def runDiscordBot():
 
         #If the message is a direct message, you do not need any prefix to talk with the chatbot
         if type(message.channel) == discord.DMChannel:
-            if user_message.startswith('/reset <@{}>'.format(client.user.id)):
+            user_message, message_type = utils.parse_message(user_message, client.user.id)
+
+            if message_type == MessageTypes.CHAT_RESET:
                 SESSION_IDS[message.channel.id] = "-1"
                 await message.channel.send("I just had a great sleep. Feeling refreshed and better.")
 
+            elif message_type == MessageTypes.NO_RESPONSE:
+                return
+
             else:
-                user_message = user_message.strip()
                 await sendMessage(message, user_message, is_private=True)
 
         else:
+            user_message, message_type = utils.parse_message(user_message, client.user.id)
+
             # If the user message is from an ALLOWED_CHANNELS and contains a '@{chatbot-name}'
             # in front of the text, then only responsd to the user
-            if user_message.startswith('<@{}>'.format(client.user.id)):
-                user_message = user_message.split('<@{}>'.format(client.user.id))[1].strip()  # Consider the text after mentions
-                await sendMessage(message, user_message, is_private=False)
+            # if message_type == MessageTypes.CHANNEL_MENTION:
+            #     await sendMessage(message, user_message, is_private=False)
 
             # If the user message contains a '/private @{chatbot-name}' in front of the text,
             # shift the conversation to private channel with the user
-            elif user_message.startswith('/private <@{}>'.format(client.user.id)):
+            if message_type == MessageTypes.GO_PRIVATE:
                 # Advisable to not use this code right now. Needs extensive testing.
-                user_message = user_message.split('/private <@{}>'.format(client.user.id))[1].strip()  # Consider the text after mentions
                 await sendMessage(message, user_message, is_private=True)
 
             # If the user message contains a '/reset @{chatbot-name}' in front of the text,
             # start a new session of conversation with the chatbot
-            elif user_message.startswith('/reset <@{}>'.format(client.user.id)):
+            elif message_type == MessageTypes.CHAT_RESET:
                 SESSION_IDS[message.channel.id] = "-1"
                 await message.channel.send("I just had a great sleep. Feeling refreshed and better.")
+
+            elif message_type == MessageTypes.RESPOND:
+                await sendMessage(message, user_message, is_private=False)
 
             else:
                 # Do not reply to messages you are not mentioned
