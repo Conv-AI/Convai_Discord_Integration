@@ -16,19 +16,31 @@ load_dotenv()
 
 
 def parse_message(message, client_id):
+
+    #   Case 1
+    # If the user message is from an ALLOWED_CHANNELS and contains a '@{chatbot-name}'
+    # in front of the text, then only responsd to the user
     # if message.startswith('<@{}>'.format(client.user.id)):
     #     return message.split('<@{}>'.format(client.user.id))[1].strip(), MessageTypes.CHANNEL_MENTION
 
+    # Case 2
+    # If the user message contains a '/reset @{chatbot-name}' in front of the text,
+    # start a new session of conversation with the chatbot
     if message.startswith('/reset <@{}>'.format(client_id)):
         return message.split('/reset <@{}>'.format(client_id))[1].strip(), MessageTypes.CHAT_RESET
 
+    # Case 3
+    # If the user message contains a '/private @{chatbot-name}' in front of the text,
+    # shift the conversation to private channel with the user
     elif message.startswith('/private <@{}>'.format(client_id)):
         return message.split('/private <@{}>'.format(client_id))[1].strip(), MessageTypes.GO_PRIVATE
 
+    # Case 4
     # Ignore responding to any other commands with '/' or '!' prefix. These are the most common prefixes.
     elif re.search("^[/!][a-zA-Z]*", message):
         return message, MessageTypes.NO_RESPONSE
 
+    # Case Default
     else:
         return message.strip(), MessageTypes.RESPOND
     

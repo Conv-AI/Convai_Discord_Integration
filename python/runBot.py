@@ -97,19 +97,13 @@ def runDiscordBot():
         else:
             user_message_suffix, message_type = utils.parse_message(user_message, client.user.id)
 
-            # If the user message is from an ALLOWED_CHANNELS and contains a '@{chatbot-name}'
-            # in front of the text, then only responsd to the user
             # if message_type == MessageTypes.CHANNEL_MENTION:
             #     await sendMessage(message, user_message, is_private=False)
 
-            # If the user message contains a '/private @{chatbot-name}' in front of the text,
-            # shift the conversation to private channel with the user
             if message_type == MessageTypes.GO_PRIVATE:
                 # Advisable to not use this code right now. Needs extensive testing.
                 await sendMessage(message, user_message_suffix, is_private=True)
 
-            # If the user message contains a '/reset @{chatbot-name}' in front of the text,
-            # start a new session of conversation with the chatbot
             elif message_type == MessageTypes.CHAT_RESET:
                 SESSION_IDS[message.channel.id] = "-1"
                 await message.channel.send("I just had a great sleep. Feeling refreshed and better.")
