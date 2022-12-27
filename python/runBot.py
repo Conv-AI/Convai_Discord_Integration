@@ -82,7 +82,7 @@ def runDiscordBot():
 
         #If the message is a direct message, you do not need any prefix to talk with the chatbot
         if type(message.channel) == discord.DMChannel:
-            user_message, message_type = utils.parse_message(user_message, client.user.id)
+            user_message_suffix, message_type = utils.parse_message(user_message, client.user.id)
 
             if message_type == MessageTypes.CHAT_RESET:
                 SESSION_IDS[message.channel.id] = "-1"
@@ -92,10 +92,10 @@ def runDiscordBot():
                 return
 
             else:
-                await sendMessage(message, user_message, is_private=True)
+                await sendMessage(message, user_message_suffix, is_private=True)
 
         else:
-            user_message, message_type = utils.parse_message(user_message, client.user.id)
+            user_message_suffix, message_type = utils.parse_message(user_message, client.user.id)
 
             # If the user message is from an ALLOWED_CHANNELS and contains a '@{chatbot-name}'
             # in front of the text, then only responsd to the user
@@ -106,7 +106,7 @@ def runDiscordBot():
             # shift the conversation to private channel with the user
             if message_type == MessageTypes.GO_PRIVATE:
                 # Advisable to not use this code right now. Needs extensive testing.
-                await sendMessage(message, user_message, is_private=True)
+                await sendMessage(message, user_message_suffix, is_private=True)
 
             # If the user message contains a '/reset @{chatbot-name}' in front of the text,
             # start a new session of conversation with the chatbot
@@ -115,7 +115,7 @@ def runDiscordBot():
                 await message.channel.send("I just had a great sleep. Feeling refreshed and better.")
 
             elif message_type == MessageTypes.RESPOND:
-                await sendMessage(message, user_message, is_private=False)
+                await sendMessage(message, user_message_suffix, is_private=False)
 
             else:
                 # Do not reply to messages you are not mentioned
