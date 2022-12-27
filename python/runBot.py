@@ -28,10 +28,7 @@ async def sendMessage(message, user_message, is_private):
 
     try:
         # Check if the channel is listed in SESSION_IDS to maintain context of conversation
-        if message.channel.id not in SESSION_IDS.keys():
-                SESSION_IDS[message.channel.id] = "-1"
-        # Get the session-id
-        sessionID = SESSION_IDS[message.channel.id]
+        sessionID = SESSION_IDS.setdefault(message.channel.id, "-1")
 
         response = utils.getResponse(
             userQuery=user_message,
@@ -41,7 +38,7 @@ async def sendMessage(message, user_message, is_private):
         )
 
         # Updating SESSION_ID with new value for new chat sessions after it has been set to -1
-        if SESSION_IDS[message.channel.id] == "-1":
+        if sessionID == "-1":
             SESSION_IDS[message.channel.id] = response["sessionID"]
 
         # Replying with the required text receive from the api call
@@ -79,10 +76,11 @@ def runDiscordBot():
 
         # Debug printing
         print(f"{username} said: '{user_message}' ({channel})")
+        # Parsing the message 
+        user_message_suffix, message_type = utils.parse_message(user_message, client.user.id)
 
         #If the message is a direct message, you do not need any prefix to talk with the chatbot
         if type(message.channel) == discord.DMChannel:
-            user_message_suffix, message_type = utils.parse_message(user_message, client.user.id)
 
             if message_type == MessageTypes.CHAT_RESET:
                 SESSION_IDS[message.channel.id] = "-1"
@@ -94,9 +92,8 @@ def runDiscordBot():
             else:
                 await sendMessage(message, user_message_suffix, is_private=True)
 
+        # For all text-channel messages
         else:
-            user_message_suffix, message_type = utils.parse_message(user_message, client.user.id)
-
             # if message_type == MessageTypes.CHANNEL_MENTION:
             #     await sendMessage(message, user_message, is_private=False)
 
