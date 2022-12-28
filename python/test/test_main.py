@@ -17,3 +17,5 @@ def test_message_parsing():
     assert utils.parse_message("/reset <@{}>".format(TEST_CLIENT_ID), TEST_CLIENT_ID) == ("", MessageTypes.CHAT_RESET)
     assert utils.parse_message("/reset <@{}> Hi!".format(TEST_CLIENT_ID), TEST_CLIENT_ID) == ("Hi!", MessageTypes.CHAT_RESET)
     assert utils.parse_message("/sleep <@{}>".format(TEST_CLIENT_ID), TEST_CLIENT_ID) == ("/sleep <@{}>".format(TEST_CLIENT_ID), MessageTypes.NO_RESPONSE)
+    assert utils.parse_message("/sleep10 <@{}>".format(TEST_CLIENT_ID), TEST_CLIENT_ID) == ("/sleep10 <@{}>".format(TEST_CLIENT_ID), MessageTypes.NO_RESPONSE)
+    assert utils.parse_message("!play-50 <@{}> Hi".format(TEST_CLIENT_ID), TEST_CLIENT_ID) == ("!play-50 <@{}> Hi".format(TEST_CLIENT_ID), MessageTypes.NO_RESPONSE)

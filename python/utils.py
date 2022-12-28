@@ -37,7 +37,7 @@ def parse_message(message, client_id):
 
     # Case 4
     # Ignore responding to any other commands with '/' or '!' prefix. These are the most common prefixes.
-    elif re.search("^[/!][a-zA-Z]*", message):
+    elif re.search("^[/!].*", message):
         return message, MessageTypes.NO_RESPONSE
 
     # Case Default
@@ -111,3 +111,6 @@ def getResponse(userQuery: str, characterID: str, sessionID: str, voiceResponse:
         
         data = response.json()  # Read the JSON data from the response
         print("ERROR: ", data["ERROR"])
+        
+        data["text"] = "I am having trouble responding right now."
+        data["sessionID"] = "-1"
