@@ -104,8 +104,6 @@ def getResponse(userQuery: str, characterID: str, sessionID: str, voiceResponse:
                 f.write(decode_string)
         '''
 
-        return data
-
     else:   # The status_code for the response is something other than 200.
         print("The conversation request has failed")
         
@@ -114,3 +112,5 @@ def getResponse(userQuery: str, characterID: str, sessionID: str, voiceResponse:
         
         data["text"] = "I am having trouble responding right now."
         data["sessionID"] = "-1"
+
+    return data
