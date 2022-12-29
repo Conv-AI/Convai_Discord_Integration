@@ -31,3 +31,10 @@ Improvements:
 - Added simple unit-testing code for python bot. 
 
 Note: Run `python -m pytest test` inside the `python` folder.
+
+#### Docker Deployment
+
+Commands to run the server inside a docker container :
+- `cd python`
+- `sudo docker build -t convai_discord_server .`
+- `sudo docker run convai_discord_server`
