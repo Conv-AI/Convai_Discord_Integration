@@ -5,6 +5,7 @@ from dotenv import load_dotenv
 
 # Local imports
 import utils
+import utils_grpc
 from messageTypes import MessageTypes
 
 # Third-party imports
@@ -13,7 +14,7 @@ import discord
 load_dotenv()
 
 # Necessary global variables
-ENABLE_VOICE_RESPONSE = os.getenv("ENABLE_VOICE_RESPONSE")
+ENABLE_VOICE_RESPONSE = os.getenv("ENABLE_VOICE_RESPONSE").lower() == "false"
 CONVAI_CHARACTER_ID = os.getenv("CONVAI_CHARACTER_ID")
 DISCORD_BOT_TOKEN = os.getenv("DISCORD_BOT_TOKEN")
 
@@ -30,9 +31,8 @@ async def sendMessage(message, user_message, is_private):
         # Check if the channel is listed in SESSION_IDS to maintain context of conversation
         sessionID = SESSION_IDS.setdefault(message.channel.id, "-1")
 
-        response = utils.getResponse(
+        response = utils_grpc.getResponseGRPC(
             userQuery=user_message,
-            characterID=CONVAI_CHARACTER_ID,
             sessionID= sessionID,
             voiceResponse=ENABLE_VOICE_RESPONSE
         )
