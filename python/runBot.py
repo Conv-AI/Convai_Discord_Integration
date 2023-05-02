@@ -42,7 +42,10 @@ async def sendMessage(message, user_message, is_private):
             SESSION_IDS[message.channel.id] = response["sessionID"]
 
         # Replying with the required text receive from the api call
-        await message.author.send(response["text"]) if is_private else await message.channel.send(response["text"])
+        if is_private:
+            await message.author.send(response["text"])
+        else:
+            await message.channel.send(response["text"])
 
     except Exception as e:
         print(e)
